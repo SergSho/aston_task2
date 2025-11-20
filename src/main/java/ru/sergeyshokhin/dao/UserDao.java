@@ -43,7 +43,6 @@ public class UserDao {
                 transaction.begin();
                 session.persist(user);
                 transaction.commit();
-                session.refresh(user);
             } catch (ConstraintViolationException e) {
                 throw new AppException("Нарушена уникальность. Данный email уже зарегистрирован.", e);
             } catch (HibernateException e) {

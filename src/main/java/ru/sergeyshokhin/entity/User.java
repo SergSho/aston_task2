@@ -48,6 +48,7 @@ public class User {
 
     public User(String name, String email, int age) {
         this.name = name;
+        if (email != null && !email.isEmpty()) email=email.toLowerCase();
         this.email = email;
         this.age = age;
     }

@@ -40,21 +40,20 @@ public class UpdateController extends AbstractController {
         }
 
         int age = data.get("age") == null ? 0 : Integer.parseInt(data.get("age"));
-        String email = data.get("email") == null ? null : data.get("email").toLowerCase();
         User user = new User(
                 Integer.parseInt(userId),
                 data.get("name"),
-                email,
+                data.get("email"),
                 age);
 
         try {
             Optional<User> optionalUser = dao.update(user);
             if (optionalUser.isPresent()) {
-                ConsoleHandler.write("Запись в базе данных успешно ОБНОВЛЕНА.");
+                ConsoleHandler.write("В базу данных введенная информация успешно ЗАПИСАНА.");
                 ConsoleHandler.write(optionalUser.get().toString());
             } else ConsoleHandler.write("""
                     Запись в базе данных НЕ ОБНОВЛЕНА.
-                    Введенные данные не отличаются от имеющихся в базе данных, либо неверно указан id.
+                    Неверно указан id.
                     """);
 
         } catch (AppException e) {
@@ -63,7 +62,7 @@ public class UpdateController extends AbstractController {
     }
 
     private boolean shouldUpdate(String parameter) {
-        ConsoleHandler.write("Следует ли обновить параметр " + parameter + "?");
+        ConsoleHandler.write("Следует ли обновить параметр \"" + parameter + "\"?");
         ConsoleHandler.write("""
                 Введите "yes", если требуется.
                 Введите "no", если не требуется.
