@@ -1,6 +1,7 @@
 package ru.sergeyshokhin.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
 import ru.sergeyshokhin.entity.User;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 public class UpdateController extends AbstractController {
 
     public UpdateController(UserValidator validator) {
@@ -18,6 +20,7 @@ public class UpdateController extends AbstractController {
 
     public void execute() {
 
+        log.info("Новый запрос на обновление объекта в базе данных.");
         Map<String, String> data = new HashMap<>(3) {{
             put("name", null);
             put("email", null);
@@ -35,35 +38,41 @@ public class UpdateController extends AbstractController {
         }
 
         if (!isRequiredUpdate(data)) {
+            log.info("Параметры для обновления объекта в базе данных не введены.");
             ConsoleHandler.write("Обновление не требуется.");
             return;
         }
 
         int age = data.get("age") == null ? 0 : Integer.parseInt(data.get("age"));
-        String email = data.get("email") == null ? null : data.get("email").toLowerCase();
         User user = new User(
                 Integer.parseInt(userId),
                 data.get("name"),
-                email,
+                data.get("email"),
                 age);
-
+        log.info("Параметры объекта, обновляемого в базе данных: " + user);
         try {
             Optional<User> optionalUser = dao.update(user);
             if (optionalUser.isPresent()) {
-                ConsoleHandler.write("Запись в базе данных успешно ОБНОВЛЕНА.");
+                log.info("Объект в базе данных обновлен. Объект имеет следующие параметры: " + optionalUser.get() + ".");
+                ConsoleHandler.write("В базу данных введенная информация успешно ЗАПИСАНА.");
                 ConsoleHandler.write(optionalUser.get().toString());
-            } else ConsoleHandler.write("""
+            } else {
+                log.warn("Введен отсутствующий в базе данных \"id\" = " + user.getId());
+                ConsoleHandler.write("""
                     Запись в базе данных НЕ ОБНОВЛЕНА.
-                    Введенные данные не отличаются от имеющихся в базе данных, либо неверно указан id.
+                    Неверно указан id.
                     """);
+            }
 
         } catch (AppException e) {
+            log.error("AppException: " + e.getMessage());
+            log.info("Введены параметры: "+ user);
             ConsoleHandler.write(e.getMessage());
         }
     }
 
     private boolean shouldUpdate(String parameter) {
-        ConsoleHandler.write("Следует ли обновить параметр " + parameter + "?");
+        ConsoleHandler.write("Следует ли обновить параметр \"" + parameter + "\"?");
         ConsoleHandler.write("""
                 Введите "yes", если требуется.
                 Введите "no", если не требуется.
