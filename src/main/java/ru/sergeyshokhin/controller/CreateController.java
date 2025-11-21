@@ -20,7 +20,7 @@ public class CreateController extends AbstractController {
     }
 
     public void execute() {
-        log.info("Запрос на добавление объекта в базу данных");
+        log.info("Новый запрос на добавление объекта в базу данных.");
         Map<String, String> data = new HashMap<>(3) {{
             put("name", null);
             put("email", null);
@@ -40,10 +40,12 @@ public class CreateController extends AbstractController {
         log.info("Параметры объекта, добавляемого в базу данных: " + user);
         try {
             User newUser = dao.create(user);
-            log.info("Объект записан в базу данных со следующими параметрами: " + user);
+            log.info("Объект записан в базу данных со следующими параметрами: " + newUser);
             ConsoleHandler.write("Запись в базе данных СОЗДАНА.");
             ConsoleHandler.write(newUser.toString());
         } catch (AppException e) {
+            log.error("AppException: " + e.getMessage());
+            log.info("Введены параметры: "+ user);
             ConsoleHandler.write(e.getMessage());
         }
 

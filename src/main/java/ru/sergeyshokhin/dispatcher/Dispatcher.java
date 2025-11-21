@@ -1,10 +1,12 @@
 package ru.sergeyshokhin.dispatcher;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.Controller;
 
 import java.util.Map;
 
+@Slf4j
 public class Dispatcher {
     private final Map<String, Controller> actions;
 
@@ -27,10 +29,12 @@ public class Dispatcher {
             do {
                 String command = ConsoleHandler.read().toLowerCase();
                 if (actions.containsKey(command)) {
+                    log.info("Выбрана команда: " + command + ".");
                     actions.get(command).execute();
                     break;
                 }
                 ConsoleHandler.write("Не известная команда. Повторно введите команду.");
+                log.info ("Введена некорректная команда: " + command + ".");
             } while (true);
         } while (true);
     }

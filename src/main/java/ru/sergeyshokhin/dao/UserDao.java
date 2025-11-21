@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.Root;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static org.hibernate.resource.transaction.spi.TransactionStatus.MARKED_ROLLBACK;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserDao {
     private final String HQL_DELETE = "DELETE FROM User WHERE id = :id";
@@ -44,9 +46,11 @@ public class UserDao {
                 session.persist(user);
                 transaction.commit();
             } catch (ConstraintViolationException e) {
+                log.error("Введены данные, нарушающие ограничения базы данных. " + e.getMessage());
                 throw new AppException("Нарушена уникальность. Данный email уже зарегистрирован.", e);
             } catch (HibernateException e) {
-                throw new RuntimeException(e);
+                log.error("Возникла неустранимая ошибка. " + e.getMessage() + ". Приложение остановлено!");
+                throw new RuntimeException();
             } finally {
                 if (transaction.isActive() || transaction.getStatus() == MARKED_ROLLBACK) transaction.rollback();
             }
@@ -55,7 +59,7 @@ public class UserDao {
     }
 
     public Optional<User> get(Integer id) {
-        User userFromDB = null;
+        User userFromDB ;
         try (var session = sessionFactory.openSession()) {
             userFromDB = session.find(User.class, id);
         }
@@ -69,15 +73,16 @@ public class UserDao {
             var transaction = session.getTransaction();
             MutationQuery query = session.createMutationQuery(HQL_DELETE);
             query.setParameter("id", id);
-            int count = 0;
+            int count;
             try {
                 transaction.begin();
                 count = query.executeUpdate();
                 transaction.commit();
                 if (count == 1) result = true;
             } catch (HibernateException e) {
+                log.error("Возникла неустранимая ошибка базы данных. " + e.getMessage() + ". Приложение остановлено!");
                 if (transaction.isActive() || transaction.getStatus() == MARKED_ROLLBACK) transaction.rollback();
-                throw new RuntimeException(e);
+                throw new RuntimeException();
             }
         }
         return result;
@@ -106,9 +111,11 @@ public class UserDao {
                 if (rows == 1) user = session.find(User.class, user.getId());
                 else user = null;
             } catch (ConstraintViolationException e) {
+                log.error("Введены данные, нарушающие ограничения базы данных. " + e.getMessage());
                 throw new AppException("Нарушена уникальность. Данный email уже зарегистрирован.",e);
             } catch (HibernateException e) {
-                throw new RuntimeException(e);
+                log.error("Возникла неустранимая ошибка базы данных. " + e.getMessage() + ". Приложение остановлено!");
+                throw new RuntimeException();
             } finally {
                 if (transaction.isActive() || transaction.getStatus() == MARKED_ROLLBACK) transaction.rollback();
             }
