@@ -6,20 +6,23 @@ import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
 import ru.sergeyshokhin.dao.UserDao;
 
+import java.util.Scanner;
+
 @Slf4j
 public abstract class AbstractController implements Controller {
-    UserDao dao = UserDao.getINSTANCE();
+    protected final UserDao dao;
     private final  UserValidator validator;
 
-    public AbstractController(UserValidator validator) {
-        this.validator = validator;
+    public AbstractController(UserValidator validator, UserDao dao) {
+                this.validator = validator;
+        this.dao = dao;
     }
 
-    String prepareParameter(String parameter) {
+    String prepareParameter(String parameter, Scanner scanner) {
         String result;
         do {
             ConsoleHandler.write("Введите параметр: " + parameter + ".");
-            result = ConsoleHandler.read();
+            result = scanner.nextLine();
             if (validator.validate(result, parameter)) {
                 log.info("Введен параметр: " + parameter + " = " +  result + ".");
                 break;

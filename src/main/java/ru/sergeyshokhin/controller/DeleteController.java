@@ -4,19 +4,23 @@ package ru.sergeyshokhin.controller;
 import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
+import ru.sergeyshokhin.dao.UserDao;
+
+import java.util.Scanner;
 
 @Slf4j
 public class DeleteController extends AbstractController {
 
-    public DeleteController(UserValidator validator) {
-        super(validator);
+    public DeleteController(UserValidator validator, UserDao dao) {
+        super(validator, dao);
     }
 
     public void execute() {
 
         log.info("Новый запрос на удаление объекта из базы данных.");
+        Scanner scanner = new Scanner(System.in);
         ConsoleHandler.write("Введите id для удаления \"User\".");
-        String userId = prepareParameter("id");
+        String userId = prepareParameter("id", scanner);
         log.info("\"id\" объекта, удаляемого из базы данных: " + userId);
         if (dao.remove(Integer.parseInt(userId))) {
             log.info("Объект c параметром \"id\" = " + userId +" удален из базы данных.");

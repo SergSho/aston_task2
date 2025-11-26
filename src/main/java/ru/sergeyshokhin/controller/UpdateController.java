@@ -4,23 +4,26 @@ package ru.sergeyshokhin.controller;
 import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
+import ru.sergeyshokhin.dao.UserDao;
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 
 @Slf4j
 public class UpdateController extends AbstractController {
 
-    public UpdateController(UserValidator validator) {
-        super(validator);
+    public UpdateController(UserValidator validator, UserDao dao) {
+        super(validator, dao);
     }
 
     public void execute() {
 
         log.info("Новый запрос на обновление объекта в базе данных.");
+        Scanner scanner = new Scanner(System.in);
         Map<String, String> data = new HashMap<>(3) {{
             put("name", null);
             put("email", null);
@@ -28,12 +31,12 @@ public class UpdateController extends AbstractController {
         }};
 
         ConsoleHandler.write("Введите id для обновляемого \"User\"");
-        String userId = prepareParameter("id");
+        String userId = prepareParameter("id", scanner);
 
         ConsoleHandler.write("Введите данные для обновления \"User\".");
         for (String key : data.keySet()) {
-            if (!shouldUpdate(key)) continue;
-            String value = prepareParameter(key);
+            if (!shouldUpdate(key, scanner)) continue;
+            String value = prepareParameter(key, scanner);
             data.put(key, value);
         }
 
@@ -71,14 +74,14 @@ public class UpdateController extends AbstractController {
         }
     }
 
-    private boolean shouldUpdate(String parameter) {
+    private boolean shouldUpdate(String parameter, Scanner scanner) {
         ConsoleHandler.write("Следует ли обновить параметр \"" + parameter + "\"?");
         ConsoleHandler.write("""
                 Введите "yes", если требуется.
                 Введите "no", если не требуется.
                 """);
         do {
-            String command = ConsoleHandler.read();
+            String command = scanner.nextLine();
             if (command.equalsIgnoreCase("yes")) return true;
             else if (command.equalsIgnoreCase("no")) return false;
             else ConsoleHandler.write("Неверно введена команда. Повторите.");

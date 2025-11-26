@@ -18,6 +18,7 @@ import org.hibernate.query.MutationQuery;
 
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
+import ru.sergeyshokhin.util.AppUtil;
 
 import java.util.Optional;
 
@@ -34,9 +35,7 @@ public class UserDao {
         return INSTANCE;
     }
 
-    private final SessionFactory sessionFactory = new Configuration()
-            .addAnnotatedClass(User.class)
-            .buildSessionFactory();
+    private final SessionFactory sessionFactory = AppUtil.getSessionFactory();
 
     public User create(User user) throws AppException {
         try (var session = sessionFactory.openSession()) {
