@@ -8,11 +8,12 @@ import ru.sergeyshokhin.dao.UserDao;
 
 @Slf4j
 public abstract class AbstractController implements Controller {
-    UserDao dao = UserDao.getINSTANCE();
+    protected final UserDao dao;
     private final  UserValidator validator;
 
-    public AbstractController(UserValidator validator) {
-        this.validator = validator;
+    public AbstractController(UserValidator validator, UserDao dao) {
+                this.validator = validator;
+        this.dao = dao;
     }
 
     String prepareParameter(String parameter) {

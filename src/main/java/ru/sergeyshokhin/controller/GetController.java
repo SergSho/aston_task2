@@ -3,20 +3,23 @@ package ru.sergeyshokhin.controller;
 import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
+import ru.sergeyshokhin.dao.UserDao;
 import ru.sergeyshokhin.entity.User;
 
 import java.util.Optional;
+import java.util.Scanner;
 
 @Slf4j
 public class GetController extends AbstractController {
 
-    public GetController(UserValidator validator) {
-        super(validator);
+    public GetController(UserValidator validator, UserDao dao) {
+        super(validator, dao);
     }
 
     public void execute() {
 
         log.info("Новый запрос на получение объекта из базы данных.");
+        ConsoleHandler.setScan(new Scanner(System.in));
         ConsoleHandler.write("Введите id для получения \"User\".");
         String userId = prepareParameter("id");
         log.info("\"id\" объекта, получаемого из базы данных: " + userId);

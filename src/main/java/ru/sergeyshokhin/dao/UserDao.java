@@ -12,12 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.MutationQuery;
 
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
+import ru.sergeyshokhin.util.AppUtil;
 
 import java.util.Optional;
 
@@ -27,6 +27,10 @@ import static org.hibernate.resource.transaction.spi.TransactionStatus.MARKED_RO
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserDao {
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
     private final String HQL_DELETE = "DELETE FROM User WHERE id = :id";
     private final static UserDao INSTANCE = new UserDao();
 
@@ -34,9 +38,7 @@ public class UserDao {
         return INSTANCE;
     }
 
-    private final SessionFactory sessionFactory = new Configuration()
-            .addAnnotatedClass(User.class)
-            .buildSessionFactory();
+    private final SessionFactory sessionFactory = AppUtil.getSessionFactory();
 
     public User create(User user) throws AppException {
         try (var session = sessionFactory.openSession()) {

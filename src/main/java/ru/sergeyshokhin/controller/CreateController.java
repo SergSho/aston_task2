@@ -5,23 +5,26 @@ import lombok.extern.slf4j.Slf4j;
 
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
+import ru.sergeyshokhin.dao.UserDao;
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 
 @Slf4j
 public class CreateController extends AbstractController {
 
-    public CreateController(UserValidator validator) {
-        super(validator);
+    public CreateController(UserValidator validator, UserDao dao) {
+        super(validator, dao);
     }
 
     public void execute() {
         log.info("Новый запрос на добавление объекта в базу данных.");
-        Map<String, String> data = new HashMap<>(3) {{
+        ConsoleHandler.setScan(new Scanner(System.in));
+        Map<String, String> data = new LinkedHashMap<>(3) {{
             put("name", null);
             put("email", null);
             put("age", null);
@@ -48,6 +51,5 @@ public class CreateController extends AbstractController {
             log.info("Введены параметры: "+ user);
             ConsoleHandler.write(e.getMessage());
         }
-
     }
 }

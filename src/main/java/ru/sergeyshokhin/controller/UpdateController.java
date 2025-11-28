@@ -4,23 +4,26 @@ package ru.sergeyshokhin.controller;
 import lombok.extern.slf4j.Slf4j;
 import ru.sergeyshokhin.consolehandler.ConsoleHandler;
 import ru.sergeyshokhin.controller.validator.UserValidator;
+import ru.sergeyshokhin.dao.UserDao;
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 
 @Slf4j
 public class UpdateController extends AbstractController {
 
-    public UpdateController(UserValidator validator) {
-        super(validator);
+    public UpdateController(UserValidator validator, UserDao dao) {
+        super(validator, dao);
     }
 
     public void execute() {
 
         log.info("Новый запрос на обновление объекта в базе данных.");
+        ConsoleHandler.setScan(new Scanner(System.in));
         Map<String, String> data = new HashMap<>(3) {{
             put("name", null);
             put("email", null);

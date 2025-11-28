@@ -2,8 +2,8 @@ package ru.sergeyshokhin.controller.validator;
 
 public class UserValidator {
     public boolean validate(String value, String key) {
-        if (value == null) return false;
-        if (isNotEmpty(value)) return false;
+        if (value == null || key==null) return false;
+        if (value.isEmpty()) return false;
         switch (key) {
             case "age":
                 return checkAge(value);
@@ -22,18 +22,15 @@ public class UserValidator {
         }
     }
 
-    private boolean isNotEmpty(String value) {
-        return value != null && value.isEmpty();
-    }
-
     private boolean checkAge(String value) {
-        return isInt(value) && value.matches("^[1-9][0-9]?$");
+        return isInt(value) && value.matches("^[1-9]\\d?$");
     }
 
     private boolean checkId(String value) {
         if (!isInt(value)) return false;
+        if (!value.matches("^[1-9]\\d*$")) return false;
         int id = Integer.parseInt(value);
-        return id > 0;
+        return id > 0  ;
     }
 
     private boolean isInt(String value) {
