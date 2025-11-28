@@ -10,6 +10,9 @@ import ru.sergeyshokhin.exception.AppException;
 
 
 public class CreateControllerTest extends ControllerTest {
+
+    private final String RESPONSE_EXCEPTION = "Нарушена уникальность. Данный email уже зарегистрирован.";
+    private final String RESPONSE_CREATED = "Запись в базе данных СОЗДАНА.";
     private final Controller controller = new CreateController(validator, dao);
 
     private static User user;
@@ -63,7 +66,7 @@ public class CreateControllerTest extends ControllerTest {
 
         Mockito.verify(dao).create(user);
         Mockito.verifyNoMoreInteractions(dao);
-        Assertions.assertEquals("Запись в базе данных СОЗДАНА.", result1);
+        Assertions.assertEquals(RESPONSE_CREATED, result1);
         Assertions.assertEquals(user.toString(), result2);
     }
 
@@ -72,7 +75,7 @@ public class CreateControllerTest extends ControllerTest {
     public void responseIfUserNotAddedToDB_methodExecute() throws AppException {
         changeSystemIn(shortData);
         changeSystemOut();
-        Mockito.doThrow(new AppException("Нарушена уникальность. Данный email уже зарегистрирован.", null))
+        Mockito.doThrow(new AppException(RESPONSE_EXCEPTION, null))
                     .when(dao).create(user);
 
         controller.execute();
@@ -81,6 +84,6 @@ public class CreateControllerTest extends ControllerTest {
         int length = array.length;
         String result = array[length - 1];
 
-        Assertions.assertEquals("Нарушена уникальность. Данный email уже зарегистрирован.", result);
+        Assertions.assertEquals(RESPONSE_EXCEPTION, result);
     }
 }

@@ -13,6 +13,15 @@ import ru.sergeyshokhin.exception.AppException;
 import java.util.Optional;
 
 public class UpdateControllerTest extends ControllerTest {
+
+    private final String RESPONSE_EXCEPTION = "Нарушена уникальность. Данный email уже зарегистрирован.";
+    private final String RESPONSE_UPDATED = "В базу данных введенная информация успешно ЗАПИСАНА.";
+    private final String RESPONSE_NOT_REQUIRED = "Обновление не требуется.";
+
+    private final String RESPONSE_NOT_FOUND_ID = """
+                Запись в базе данных НЕ ОБНОВЛЕНА.
+                Неверно указан id.""";
+
     private final Controller controller = new UpdateController(validator, dao);
 
     private static String allParamNull;
@@ -79,7 +88,7 @@ public class UpdateControllerTest extends ControllerTest {
         changeSystemOut();
         Optional<User> optionalUser = Optional.of(user);
         Mockito.doReturn(optionalUser).when(dao).update(user);
-        String expectedResult = "В базу данных введенная информация успешно ЗАПИСАНА.";
+
 
         controller.execute();
 
@@ -90,7 +99,7 @@ public class UpdateControllerTest extends ControllerTest {
 
         Mockito.verify(dao).update(user);
         Mockito.verifyNoMoreInteractions(dao);
-        Assertions.assertEquals(expectedResult, result1);
+        Assertions.assertEquals(RESPONSE_UPDATED, result1);
         Assertions.assertEquals(user.toString(), result2);
     }
 
@@ -101,9 +110,6 @@ public class UpdateControllerTest extends ControllerTest {
         changeSystemOut();
         Optional<User> optionalUser = Optional.empty();
         Mockito.doReturn(optionalUser).when(dao).update(user);
-        String expectedResult = """
-                Запись в базе данных НЕ ОБНОВЛЕНА.
-                Неверно указан id.""";
 
         controller.execute();
 
@@ -111,7 +117,7 @@ public class UpdateControllerTest extends ControllerTest {
         int length = array.length;
         String result = array[length - 1];
 
-        Assertions.assertEquals(expectedResult, result);
+        Assertions.assertEquals(RESPONSE_NOT_FOUND_ID, result);
     }
 
     @DisplayName("Ответ, если \"user\"  НЕ обновлен (ошибка уникальности) в базе данных.")
@@ -119,9 +125,8 @@ public class UpdateControllerTest extends ControllerTest {
     public void responseIfUserNotUpdated_Exception_methodExecute() throws AppException {
         changeSystemIn(shortData);
         changeSystemOut();
-        Mockito.doThrow(new AppException("Нарушена уникальность. Данный email уже зарегистрирован.", null))
+        Mockito.doThrow(new AppException(RESPONSE_EXCEPTION,null))
                 .when(dao).update(user);
-        String expectedResult = "Нарушена уникальность. Данный email уже зарегистрирован.";
 
         controller.execute();
 
@@ -129,15 +134,14 @@ public class UpdateControllerTest extends ControllerTest {
         int length = array.length;
         String result = array[length - 1];
 
-        Assertions.assertEquals(expectedResult, result);
+        Assertions.assertEquals(RESPONSE_EXCEPTION, result);
     }
 
-    @DisplayName("Создание объекта \"user\" и вызов метода \"dao.update(user)\".")
+    @DisplayName("Отсутствие вызова метода \"dao.update(user)\".")
     @Test
     public void createUserAndNotInvokeDaoMethod_methodExecute() {
         changeSystemIn(allParamNull);
         changeSystemOut();
-        String expectedResult = "Обновление не требуется.";
 
         controller.execute();
 
@@ -146,6 +150,6 @@ public class UpdateControllerTest extends ControllerTest {
         String result = array[length - 1];
 
         Mockito.verifyNoInteractions(dao);
-        Assertions.assertEquals(expectedResult, result);
+        Assertions.assertEquals(RESPONSE_NOT_REQUIRED, result);
     }
 }

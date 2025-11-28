@@ -18,9 +18,9 @@ public class DeleteController extends AbstractController {
     public void execute() {
 
         log.info("Новый запрос на удаление объекта из базы данных.");
-        Scanner scanner = new Scanner(System.in);
+        ConsoleHandler.setScan(new Scanner(System.in));
         ConsoleHandler.write("Введите id для удаления \"User\".");
-        String userId = prepareParameter("id", scanner);
+        String userId = prepareParameter("id");
         log.info("\"id\" объекта, удаляемого из базы данных: " + userId);
         if (dao.remove(Integer.parseInt(userId))) {
             log.info("Объект c параметром \"id\" = " + userId +" удален из базы данных.");

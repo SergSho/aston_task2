@@ -9,7 +9,6 @@ import ru.sergeyshokhin.dao.UserDao;
 import ru.sergeyshokhin.entity.User;
 import ru.sergeyshokhin.exception.AppException;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -24,7 +23,7 @@ public class CreateController extends AbstractController {
 
     public void execute() {
         log.info("Новый запрос на добавление объекта в базу данных.");
-        Scanner scanner = new Scanner(System.in);
+        ConsoleHandler.setScan(new Scanner(System.in));
         Map<String, String> data = new LinkedHashMap<>(3) {{
             put("name", null);
             put("email", null);
@@ -33,7 +32,7 @@ public class CreateController extends AbstractController {
 
         ConsoleHandler.write("Введите данные для создания \"User\".");
         for (String key : data.keySet()) {
-            String value = prepareParameter(key, scanner);
+            String value = prepareParameter(key);
             data.put(key, value);
         }
         User user = new User(

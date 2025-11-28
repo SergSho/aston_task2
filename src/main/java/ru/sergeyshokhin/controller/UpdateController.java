@@ -23,7 +23,7 @@ public class UpdateController extends AbstractController {
     public void execute() {
 
         log.info("Новый запрос на обновление объекта в базе данных.");
-        Scanner scanner = new Scanner(System.in);
+        ConsoleHandler.setScan(new Scanner(System.in));
         Map<String, String> data = new HashMap<>(3) {{
             put("name", null);
             put("email", null);
@@ -31,12 +31,12 @@ public class UpdateController extends AbstractController {
         }};
 
         ConsoleHandler.write("Введите id для обновляемого \"User\"");
-        String userId = prepareParameter("id", scanner);
+        String userId = prepareParameter("id");
 
         ConsoleHandler.write("Введите данные для обновления \"User\".");
         for (String key : data.keySet()) {
-            if (!shouldUpdate(key, scanner)) continue;
-            String value = prepareParameter(key, scanner);
+            if (!shouldUpdate(key)) continue;
+            String value = prepareParameter(key);
             data.put(key, value);
         }
 
@@ -74,14 +74,14 @@ public class UpdateController extends AbstractController {
         }
     }
 
-    private boolean shouldUpdate(String parameter, Scanner scanner) {
+    private boolean shouldUpdate(String parameter) {
         ConsoleHandler.write("Следует ли обновить параметр \"" + parameter + "\"?");
         ConsoleHandler.write("""
                 Введите "yes", если требуется.
                 Введите "no", если не требуется.
                 """);
         do {
-            String command = scanner.nextLine();
+            String command = ConsoleHandler.read();
             if (command.equalsIgnoreCase("yes")) return true;
             else if (command.equalsIgnoreCase("no")) return false;
             else ConsoleHandler.write("Неверно введена команда. Повторите.");

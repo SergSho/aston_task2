@@ -12,6 +12,9 @@ import ru.sergeyshokhin.entity.User;
 import java.util.Optional;
 
 public class GetControllerTest extends ControllerTest {
+
+    private final String RESPONSE_FOUND = "Запись в базе данных НАЙДЕНА.";
+    private final String RESPONSE_NOT_FOUND_ID = "Запись в базе данных для введенного \"id\" НЕ НАЙДЕНА.";
     private final Controller controller = new GetController(validator, dao);
 
     private static User user;
@@ -62,7 +65,7 @@ public class GetControllerTest extends ControllerTest {
 
         Mockito.verify(dao).get(Mockito.anyInt());
         Mockito.verifyNoMoreInteractions(dao);
-        Assertions.assertEquals ("Запись в базе данных НАЙДЕНА.", result1);
+        Assertions.assertEquals (RESPONSE_FOUND, result1);
         Assertions.assertEquals (user.toString(), result2);
     }
 
@@ -80,6 +83,6 @@ public class GetControllerTest extends ControllerTest {
         int length = array.length;
         String result = array[length-1];
 
-        Assertions.assertEquals("Запись в базе данных для введенного \"id\" НЕ НАЙДЕНА.", result);
+        Assertions.assertEquals(RESPONSE_NOT_FOUND_ID, result);
     }
 }

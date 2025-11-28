@@ -7,8 +7,6 @@ import ru.sergeyshokhin.controller.validator.UserValidator;
 import ru.sergeyshokhin.dao.UserDao;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class ControllerTest{
@@ -28,10 +26,7 @@ public class ControllerTest{
 	private final PrintStream OUT= System.out;
 
     protected static Stream<String> inputData () {
-        List<String> list = new ArrayList<>();
-        list.add(shortData);
-        list.add(longData);
-        return list.stream();
+        return Stream.of (shortData, longData);
     }
 
 

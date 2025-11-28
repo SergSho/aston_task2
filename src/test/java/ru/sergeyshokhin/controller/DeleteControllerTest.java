@@ -9,6 +9,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 public class DeleteControllerTest extends ControllerTest{
+
+    private final String RESPONSE_DELETED = "Запись в базе данных УДАЛЕНА.";
+    private final String RESPONSE_NOT_FOUND_ID = "Запись в базе данных для введенного \"id\" НЕ НАЙДЕНА.";
     private final Controller controller = new DeleteController(validator, dao);
 
     @BeforeAll
@@ -53,7 +56,7 @@ public class DeleteControllerTest extends ControllerTest{
 
         Mockito.verify(dao).remove(Mockito.anyInt());
         Mockito.verifyNoMoreInteractions(dao);
-        Assertions.assertEquals ("Запись в базе данных УДАЛЕНА.", result);
+        Assertions.assertEquals (RESPONSE_DELETED, result);
     }
 
     @DisplayName("Ответ, если запись в базе данных НЕ удалена.")
@@ -69,6 +72,6 @@ public class DeleteControllerTest extends ControllerTest{
         int length = array.length;
         String result = array[length-1];
 
-        Assertions.assertEquals("Запись в базе данных для введенного \"id\" НЕ НАЙДЕНА.", result);
+        Assertions.assertEquals(RESPONSE_NOT_FOUND_ID, result);
     }
 }

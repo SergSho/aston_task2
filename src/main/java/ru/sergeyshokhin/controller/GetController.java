@@ -19,9 +19,9 @@ public class GetController extends AbstractController {
     public void execute() {
 
         log.info("Новый запрос на получение объекта из базы данных.");
-        Scanner scanner = new Scanner(System.in);
+        ConsoleHandler.setScan(new Scanner(System.in));
         ConsoleHandler.write("Введите id для получения \"User\".");
-        String userId = prepareParameter("id", scanner);
+        String userId = prepareParameter("id");
         log.info("\"id\" объекта, получаемого из базы данных: " + userId);
         Optional<User> user = dao.get(Integer.parseInt(userId));
         if (user.isPresent()) {
